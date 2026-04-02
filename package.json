@@ -1,0 +1,13 @@
+{
+  "name": "wnpm-cli",
+  "version": "1.0.0",
+  "description": "Secure npm wrapper",
+  "bin": {
+    "wnpm": "./index.js"
+  },
+  "files": ["index.js", "api.js", "utils.js"],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "ISC"
+}
