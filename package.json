@@ -1,9 +1,12 @@
 {
-  "name": "wnpm-cli",
+  "name": "@_wnpm/wnpm-cli",
   "version": "1.0.0",
   "description": "Secure npm wrapper",
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
-    "wnpm": "./index.js"
+    "wnpm": "index.js"
   },
   "files": ["index.js", "api.js", "utils.js"],
   "engines": {

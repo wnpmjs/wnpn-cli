@@ -31,7 +31,7 @@ function askUser(question) {
     pkgs = getDepsFromPackageJson();
   }
 
-  console.log("🔍 Running security checks...\n");
+  console.log("🔍 Running wnpm checks...\n");
 
   const installOrder = [];
   const payload = [];
@@ -84,41 +84,40 @@ function askUser(question) {
 
     let finalVersion = row.version;
 
-    if (row.isNew) {
+    if (row.isNew && row.recommendedVersion) {
       console.log(
-        `⚠️ ${item.name}@${row.version} was published recently (<24h)`
+        `⚠️ wnpm has extra guidance for ${item.name}@${row.version}.`
       );
-
-      if (row.previousVersion) {
-        const answer = await askUser(
-          `👉 Install safer version ${row.previousVersion} instead? (y/n): `
-        );
-        if (answer === "y") {
-          console.log(`✔️ Switching to safer version ${row.previousVersion}`);
-          finalVersion = row.previousVersion;
-        } else {
-          console.log("⚠️ Proceeding with latest version...");
-        }
+      console.log(
+        `   Suggested version: ${item.name}@${row.recommendedVersion} (preferred for this install).`
+      );
+      const answer = await askUser(
+        `   Use ${row.recommendedVersion}? (y/n): `
+      );
+      if (answer === "y") {
+        console.log(`✔️ Using ${row.recommendedVersion}`);
+        finalVersion = row.recommendedVersion;
+      } else {
+        console.log("⚠️ Keeping your requested version...");
       }
+    } else if (row.isNew) {
+      console.log(
+        `⚠️ wnpm has extra guidance for ${item.name}@${row.version}; no alternate version is suggested right now.`
+      );
     }
 
-    console.log(`Risk Score: ${row.risk}`);
-
-    if (row.isNew) console.log("⚠️ Recently published package");
-    if (row.hasInstallScripts) console.log("⚠️ Has install scripts");
-
     if (row.vulnIds && row.vulnIds.length > 0) {
-      console.log("❌ Vulnerabilities found:");
+      console.log("❌ Findings:");
       row.vulnIds.forEach((id) => console.log(`   - ${id}`));
     }
 
     if (row.blocked) {
-      console.log("❌ BLOCKED: High risk package");
+      console.log("❌ Install not allowed for this package.");
       hasHighRisk = true;
     } else if (row.level === "medium") {
-      console.log("⚠️ Warning: Medium risk package");
+      console.log("⚠️ Proceed with caution for this package.");
     } else {
-      console.log("✅ Safe");
+      console.log("✅ Cleared to proceed.");
     }
 
     const specChanged = finalVersion !== row.version;
@@ -128,7 +127,7 @@ function askUser(question) {
   }
 
   if (hasHighRisk) {
-    console.log("\n🚫 Installation blocked due to high-risk packages.");
+    console.log("\n🚫 Installation stopped by wnpm.");
     process.exit(1);
   }
 

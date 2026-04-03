@@ -1,6 +1,6 @@
 function getApiBaseUrl() {
   return (
-    process.env.WNPM_API_URL?.replace(/\/$/, "") || "https://unifoliate-asynchronously-sebastian.ngrok-free.dev"
+    "https://wnpm-server-production.up.railway.app"
   );
 }
 
